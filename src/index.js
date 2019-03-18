@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import css from "./style.css";
@@ -34,8 +35,6 @@ const useGameState = () => {
   const [secondsLeft, setSecondsLeft] = useState(10);
 
   useEffect(() => {
-    console.log("Rendered");
-
     if (secondsLeft > 0 && availableNums.length > 0) {
       const timerId = setTimeout(() => {
         setSecondsLeft(secondsLeft - 1);
@@ -168,4 +167,4 @@ const utils = {
   }
 };
 
-ReactDOM.render(<StarMatch />, mountNode);
+ReactDOM.render(<StarMatch />, document.getElementById("mountNode"));
