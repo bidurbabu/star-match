@@ -18,11 +18,17 @@ const PlayNumber = (props) =>  (
     </button> 
   );
 
+const ReplayGame = (props) => (
+  <button onClick={props.onClick}>ReplayGame</button>
+);
+
+
 
 const StarMatch = () => {
   const [stars, setStars] = useState(utils.random(1,9));
   const [availableNums, setAvailableNums] = useState(utils.range(1,9));
   const [candidateNums, setCandidateNums] = useState([]);
+ 
 
   const candidateAreWrong = utils.sum(candidateNums) > stars;
 
@@ -34,6 +40,12 @@ const StarMatch = () => {
       return candidateAreWrong ? 'wrong': 'candidate';
     }
     return 'available';
+  }
+
+  const onReplayGame = () => {
+    setAvailableNums(utils.range(1,9));
+    setCandidateNums([]);
+    setStars(utils.random(1,9));
   }
 
   const onNumberClick = (number, currentStatus) => {
@@ -56,11 +68,11 @@ const StarMatch = () => {
       setStars(utils.randomSumIn(newAvailableNums, 9))
       setAvailableNums(newAvailableNums);
       setCandidateNums([]);
-      
 
     }
 
   }
+  const gameIsDone = availableNums.length === 0;
 
   const numbers = 9;
     return (
@@ -70,7 +82,7 @@ const StarMatch = () => {
         </div>
         <div className="body">
           <div className="left">
-            <StartDisplay count={stars} />
+            { gameIsDone ? (<ReplayGame onClick={onReplayGame}></ReplayGame>) : (<StartDisplay count={stars} />) }
           </div>
           <div className="right">
           { utils.range(1,numbers).map(number => 
