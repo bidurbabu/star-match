@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import ReactDOM from "react-dom";
 import css from './style.css';
 
@@ -19,15 +19,30 @@ const PlayNumber = (props) =>  (
   );
 
 const ReplayGame = (props) => (
-  <button onClick={props.onClick}>ReplayGame</button>
+  <div className="game-done">
+    <div>Game is {props.gameStatus} </div>
+    <button onClick={props.onClick}>ReplayGame</button>
+  </div>
 );
 
 
 
-const StarMatch = () => {
+const Game = (props) => {
   const [stars, setStars] = useState(utils.random(1,9));
   const [availableNums, setAvailableNums] = useState(utils.range(1,9));
   const [candidateNums, setCandidateNums] = useState([]);
+  const [secondsLeft, setSecondsLeft] = useState(10);
+
+  useEffect(() => {
+    console.log('Rendered');
+
+    if(secondsLeft > 0 && availableNums.length > 0){
+      const timerId = setTimeout(()=>{
+        setSecondsLeft(secondsLeft - 1);
+      }, 1000);
+      return () => clearTimeout(timerId);
+  }});
+
  
 
   const candidateAreWrong = utils.sum(candidateNums) > stars;
@@ -42,15 +57,8 @@ const StarMatch = () => {
     return 'available';
   }
 
-  const onReplayGame = () => {
-    setAvailableNums(utils.range(1,9));
-    setCandidateNums([]);
-    setStars(utils.random(1,9));
-  }
-
   const onNumberClick = (number, currentStatus) => {
-    console.log('Clicked '+number+' '+ currentStatus);
-    if(currentStatus == 'used') {
+    if(currentStatus == 'used' || gameStatus !== 'active') {
       return;
     }
 
@@ -72,7 +80,8 @@ const StarMatch = () => {
     }
 
   }
-  const gameIsDone = availableNums.length === 0;
+  
+  const gameStatus = availableNums.length === 0 ? 'won' : secondsLeft === 0 ? 'lost': 'active';
 
   const numbers = 9;
     return (
@@ -82,7 +91,7 @@ const StarMatch = () => {
         </div>
         <div className="body">
           <div className="left">
-            { gameIsDone ? (<ReplayGame onClick={onReplayGame}></ReplayGame>) : (<StartDisplay count={stars} />) }
+            { gameStatus !== 'active' ? (<ReplayGame onClick={props.startNewGame}></ReplayGame>) : (<StartDisplay count={stars} />) }
           </div>
           <div className="right">
           { utils.range(1,numbers).map(number => 
@@ -94,10 +103,15 @@ const StarMatch = () => {
           />) }
           </div>
         </div>
-        <div className="timer">Time Remaining: 10</div>
+        <div className="timer">Time Remaining: {secondsLeft}</div>
       </div>
     );
   };
+
+  const StarMatch = () => {
+    const [gameId, setGameId] = useState(1);
+    return <Game key={gameId} startNewGame={()=> setGameId(gameId + 1)}/>;
+  }
   
   // Color Theme
   const colors = {
