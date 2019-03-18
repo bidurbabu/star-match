@@ -1,6 +1,18 @@
 import React, {useState} from "react";
 import ReactDOM from "react-dom";
-import css from './style.css'
+import css from './style.css';
+
+const StartDisplay = (props) => (
+  <>
+    { utils.range(1, props.count).map((starId) =>
+    <div key={starId}className="star" /> )
+    }
+  </>
+);
+
+const PlayNumber = (props) =>  (
+    <button  onClick={() => console.log('Num', props.number)} className="number">{props.number}</button> 
+  );
 
 
 const StarMatch = () => {
@@ -13,13 +25,10 @@ const StarMatch = () => {
         </div>
         <div className="body">
           <div className="left">
-          { utils.range(1,stars)
-          .map(
-            (starId)=> { return (<div key={starId} className="star" />)
-           }) }
+            <StartDisplay count={stars} />
           </div>
           <div className="right">
-           {utils.range(1,numbers).map(number => <button key={number} className="number">{number}</button>)}
+          { utils.range(1,numbers).map(number => <PlayNumber key={number} number={number}></PlayNumber>) }
           </div>
         </div>
         <div className="timer">Time Remaining: 10</div>
